@@ -5,32 +5,27 @@ namespace Modules\Availability\app\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Availability\app\Entities\TeamAvailability;
+use Modules\Availability\app\Http\Requests\StoreAvailabilityRequest;
 use Modules\Teams\app\Entities\Team;
 
 class AvailabilityController extends Controller
 {
     // Set recurring weekly availability for a team
-    public function store(Request $request, $teamId)
+    public function store(StoreAvailabilityRequest $request, $teamId)
     {
         $team = Team::findOrFail($teamId);
-
-        $data = $request->validate([
-            'day_of_week' => 'required|integer|min:0|max:6',
-            'start_time'  => 'required|date_format:H:i',
-            'end_time'    => 'required|date_format:H:i|after:start_time',
-        ]);
+        $data = $request->validated();
 
         $availability = TeamAvailability::create([
-            'team_id'    => $team->id,
-            'day_of_week'=> $data['day_of_week'],
-            'start_time' => $data['start_time'],
-            'end_time'   => $data['end_time'],
-            'tenant_id'  => $team->tenant_id, // ensures tenant scoping
+            'team_id'     => $team->id,
+            'day_of_week' => $data['day_of_week'],
+            'start_time'  => $data['start_time'],
+            'end_time'    => $data['end_time'],
+            'tenant_id'   => $team->tenant_id,
         ]);
 
         return response()->json($availability, 201);
     }
-
     // List all availabilities for a team
     public function index($teamId)
     {
