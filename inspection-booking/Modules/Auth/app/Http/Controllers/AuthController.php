@@ -10,24 +10,20 @@ use Modules\Auth\app\Http\Requests\LoginRequest;
 use Modules\Tenants\Entities\Tenant;
 use Modules\Users\Entities\User;
 use Illuminate\Support\Facades\DB;
+use Modules\Auth\app\Http\Requests\RegisterUserRequest;
 
 class AuthController extends Controller
 {
-    public function registerUser(Request $request)
+    public function registerUser(RegisterUserRequest $request)
     {
-        $data = $request->validate([
-            'tenant_id' => 'required|exists:tenants,id',  // must exist
-            'name'      => 'required|string|max:255',
-            'email'     => 'required|email|unique:users,email',
-            'password'  => 'required|min:6|confirmed',
-        ]);
+        $data = $request->validated();
 
         $user = User::create([
             'name'      => $data['name'],
             'email'     => $data['email'],
             'password'  => Hash::make($data['password']),
             'tenant_id' => $data['tenant_id'],
-            'role'      => 'user',  // default role
+            'role'      => 'user',
         ]);
 
         $token = $user->createToken('api-token')->plainTextToken;
