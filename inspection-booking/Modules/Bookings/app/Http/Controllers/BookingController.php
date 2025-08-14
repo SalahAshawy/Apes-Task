@@ -35,9 +35,10 @@ class BookingController extends Controller
         $exists = Booking::where('team_id', $data['team_id'])
             ->where('date', $data['date'])
             ->where(function ($q) use ($data) {
-                $q->whereBetween('start_time', [$data['start_time'], $data['end_time']])
-                  ->orWhereBetween('end_time', [$data['start_time'], $data['end_time']]);
+                $q->where('start_time', '<', $data['end_time']) 
+                    ->where('end_time', '>', $data['start_time']); 
             })->exists();
+
 
         if ($exists) {
             return response()->json(['message' => 'Time slot already booked'], 409);

@@ -43,35 +43,42 @@ class TeamController extends Controller
 
         $slots = [];
 
-        for ($date = $from; $date->lte($to); $date->addDay()) {
-            $dayOfWeek = $date->dayOfWeek; // 0 = Sunday
+        for ($date = $from->copy(); $date->lte($to); $date->addDay()) {
+            $dayOfWeek = $date->dayOfWeek; // 0 = Sunday, 6 = Saturday
 
             $availabilities = $team->availability()->where('day_of_week', $dayOfWeek)->get();
 
             foreach ($availabilities as $a) {
-                $start = Carbon::parse($a->start_time);
-                $end   = Carbon::parse($a->end_time);
+                $slotStart = Carbon::parse($a->start_time);
+                $slotEndLimit = Carbon::parse($a->end_time);
 
-                while ($start->lt($end)) {
-                    $slotEnd = $start->copy()->addHour();
+                while ($slotStart->lt($slotEndLimit)) {
+                    $slotEnd = $slotStart->copy()->addHour();
+
+                    // Ensure we don't go past availability end time
+                    if ($slotEnd->gt($slotEndLimit)) {
+                        $slotEnd = $slotEndLimit->copy();
+                    }
 
                     // Check if slot overlaps any booking
                     $exists = Booking::where('team_id', $team->id)
                         ->where('date', $date->format('Y-m-d'))
-                        ->where(function ($q) use ($start, $slotEnd) {
-                            $q->whereBetween('start_time', [$start->format('H:i'), $slotEnd->format('H:i')])
-                                ->orWhereBetween('end_time', [$start->format('H:i'), $slotEnd->format('H:i')]);
+                        ->where(function ($q) use ($slotStart, $slotEnd) {
+                            $q->where(function ($query) use ($slotStart, $slotEnd) {
+                                $query->where('start_time', '<', $slotEnd->format('H:i'))
+                                    ->where('end_time', '>', $slotStart->format('H:i'));
+                            });
                         })->exists();
 
                     if (!$exists) {
                         $slots[] = [
-                            'date' => $date->format('Y-m-d'),
-                            'start_time' => $start->format('H:i'),
-                            'end_time' => $slotEnd->format('H:i'),
+                            'date'       => $date->format('Y-m-d'),
+                            'start_time' => $slotStart->format('H:i'),
+                            'end_time'   => $slotEnd->format('H:i'),
                         ];
                     }
 
-                    $start->addHour();
+                    $slotStart->addHour();
                 }
             }
         }
