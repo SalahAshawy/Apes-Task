@@ -7,6 +7,9 @@ Route::prefix('v1')->group(function () {
     Route::post('auth/register', [AuthController::class, 'register']);
     Route::post('auth/login', [AuthController::class, 'login']);
 
+    Route::post('register-user', [AuthController::class, 'registerUser']);
+
+
     // Protected routes: only authenticated users + tenant scoped
     Route::middleware(['auth:sanctum', 'tenant.identify'])->group(function () {
         Route::post('auth/logout', [AuthController::class, 'logout']);

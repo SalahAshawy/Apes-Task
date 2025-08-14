@@ -3,6 +3,7 @@
 namespace Modules\Auth\app\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Modules\Auth\app\Http\Requests\RegisterRequest;
 use Modules\Auth\app\Http\Requests\LoginRequest;
@@ -12,6 +13,30 @@ use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
+    public function registerUser(Request $request)
+    {
+        $data = $request->validate([
+            'tenant_id' => 'required|exists:tenants,id',  // must exist
+            'name'      => 'required|string|max:255',
+            'email'     => 'required|email|unique:users,email',
+            'password'  => 'required|min:6|confirmed',
+        ]);
+
+        $user = User::create([
+            'name'      => $data['name'],
+            'email'     => $data['email'],
+            'password'  => Hash::make($data['password']),
+            'tenant_id' => $data['tenant_id'],
+            'role'      => 'user',  // default role
+        ]);
+
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        return response()->json([
+            'user' => $user,
+            'token' => $token
+        ], 201);
+    }
     public function register(RegisterRequest $request)
     {
         $data = $request->validated();
