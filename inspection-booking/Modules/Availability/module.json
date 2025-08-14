@@ -1,0 +1,11 @@
+{
+    "name": "Availability",
+    "alias": "availability",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Availability\\Providers\\AvailabilityServiceProvider"
+    ],
+    "files": []
+}

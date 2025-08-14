@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/bookings",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Bookings\\": "app/",
+            "Modules\\Bookings\\Database\\Factories\\": "database/factories/",
+            "Modules\\Bookings\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Bookings\\Tests\\": "tests/"
+        }
+    }
+}
