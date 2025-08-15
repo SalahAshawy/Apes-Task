@@ -168,6 +168,6 @@ A modular Laravel-based SaaS system allowing companies (tenants) to manage inspe
 
 You can import this Postman collection to test all API endpoints:
 [Bookings Saas.postman_collection.json](https://github.com/user-attachments/files/21779384/Bookings.Saas.postman_collection.json)
-Or you can access it directly from Postman: [Public Link](https://.postman.co/workspace/Personal-Workspace~ad6f339b-721b-4d7a-a9a9-360026c674c9/collection/30942164-f135220c-b77a-4fa7-a8e7-70d968fa038b?action=share&creator=30942164)
+Or you can access it directly from Postman: [Public Link](https://postman.co/workspace/Personal-Workspace~ad6f339b-721b-4d7a-a9a9-360026c674c9/collection/30942164-f135220c-b77a-4fa7-a8e7-70d968fa038b?action=share&creator=30942164)
 
 
